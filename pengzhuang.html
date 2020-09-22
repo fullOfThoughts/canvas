@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script>
+      //  设置画布高宽
+      ~~(function initSize() {
+        window.onresize = () => {
+          const W = window.innerWidth
+          const H = window.innerHeight
+          document.querySelector('canvas').style.display = 'block'
+          document.querySelector('canvas').width = W
+          document.querySelector('canvas').height = H
+          createCircle()
+        }
+        const W = window.innerWidth
+        const H = window.innerHeight
+        document.querySelector('canvas').style.display = 'block'
+        document.querySelector('canvas').width = W
+        document.querySelector('canvas').height = H
+      })()
+
+      class Circle {
+        constructor() {
+          this.canvas = document.querySelector('canvas')
+          this.ctx = this.canvas.getContext('2d')
+          //  为小球设置初始化随机速度
+          this.VX = -Math.random() + Math.random()
+          this.VY = -Math.random() + Math.random()
+        }
+
+        //  初始化圆球数据
+        initCircle() {
+          this.r = 1 + Math.random() * 2
+          this.center = {
+            x: this.ctx.canvas.width * Math.random(),
+            y: this.ctx.canvas.height * Math.random(),
+          }
+        }
+        //  渲染小球
+        drawCircle() {
+          const ctx = this.ctx
+          const r = this.r
+          const center = this.center
+          ctx.beginPath()
+          ctx.arc(center.x, center.y, r, 0, 2 * Math.PI)
+          ctx.fillStyle = 'hotpink'
+          ctx.fill()
+          ctx.stroke()
+        }
+        //  为小球添加速度
+        move() {
+          //  为小球设置碰撞原理
+          this.center.x += this.VX
+          this.center.y += this.VY
+          this.drawCircle()
+          if (
+            this.center.x + this.r >= this.ctx.canvas.width ||
+            this.center.x <= this.r
+          ) {
+            this.VX = -this.VX
+          }
+          if (
+            this.center.y + this.r >= this.ctx.canvas.height ||
+            this.center.y <= this.r
+          ) {
+            this.VY = -this.VY
+          }
+        }
+      }
+      //  设置全局变量存储批量实例化出来的小球
+      let arr = []
+      //  批量生产小球
+      window.createCircle = () => {
+        for (let i = 0; i < 666; i++) {
+          let circle = new Circle()
+          circle.initCircle()
+          circle.drawCircle()
+          arr.push(circle)
+        }
+      }
+      window.createCircle()
+      //  为小球添加速度
+      this.timer = setInterval(() => {
+        const ctx = document.querySelector('canvas').getContext('2d')
+        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        arr.forEach((item) => {
+          item.move()
+        })
+      }, 1000 / 60)
+    </script>
+  </body>
+</html>

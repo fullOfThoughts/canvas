@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      canvas {
+        border: 1px solid red;
+      }
+    </style>
+    <script>
+      window.onload = () => {
+        class Pie {
+          //  初始化数据
+          constructor(data) {
+            this.ctx = document.querySelector('canvas').getContext('2d')
+            this.w = this.ctx.canvas.width
+            this.h = this.ctx.canvas.height
+            this.center = { x: (this.w * 2) / 3, y: this.h / 2 }
+            this.r = 100
+            //  定义旋转角度
+            this.angle = 45
+          }
+          //  init入口函数
+          init() {}
+          //  饼状图
+          drawPie(data) {
+            const w = this.w
+            const h = this.h
+            const ctx = this.ctx
+            const center = this.center
+            const r = this.r
+            const angle = this.angle
+            let colors = []
+            const number = data.data.reduce((pre, cur) => {
+              colors.push(cur.color)
+              return pre.concat(cur.count)
+            }, [])
+            const sum = number.reduce((pre, cur) => pre + cur, 0)
+            let rotate = JSON.parse(JSON.stringify(angle))
+            for (let i = 0; i < number.length; i++) {
+              const total = number.reduce(
+                (pre, cur, index) => (index <= i ? pre + cur : pre),
+                0
+              )
+              const deg = (total / sum) * 360 + angle
+              ctx.beginPath()
+              ctx.arc(
+                center.x,
+                center.y,
+                r,
+                (rotate * Math.PI) / 180,
+                (deg * Math.PI) / 180
+              )
+              ctx.lineTo(center.x, center.y)
+              ctx.closePath()
+              ctx.fillStyle = colors[i]
+              ctx.fill()
+
+              rotate = deg
+            }
+          }
+
+          //  饼状图配文字
+          drawText(data) {
+            const w = this.w
+            const h = this.h
+            const ctx = this.ctx
+            const center = this.center
+            const r = this.r
+            const angle = this.angle
+            let colors = []
+            const number = data.data.reduce((pre, cur) => {
+              colors.push(cur.color)
+              return pre.concat(cur.count)
+            }, [])
+            const sum = number.reduce((pre, cur) => pre + cur, 0)
+            let rotate = JSON.parse(JSON.stringify(angle))
+            const textR = (3 * r) / 2
+            for (let i = 0; i < data.data.length; i++) {
+              const total = number.reduce(
+                (pre, cur, index) => (index <= i ? pre + cur : pre),
+                0
+              )
+
+              const mo = (number[i] / sum) * 360
+              const deg = (total / sum) * 360 + angle - mo / 2
+              const textX = center.x + Math.cos((deg * Math.PI) / 180) * textR
+              const textY = center.y + Math.sin((deg * Math.PI) / 180) * textR
+              ctx.beginPath()
+              ctx.font = '16px none'
+              ctx.textBaseline = 'bottom'
+              ctx.fillStyle = colors[i]
+              textX <= center.x
+                ? (ctx.textAlign = 'right')
+                : (ctx.textAlign = 'left')
+              ctx.fillText(data.data[i].province, textX, textY)
+              ctx.moveTo(center.x, center.y)
+
+              ctx.lineTo(textX, textY)
+              if (textX >= center.x) {
+                ctx.lineTo(
+                  textX + ctx.measureText(data.data[i].province).width,
+                  textY
+                )
+              } else {
+                ctx.lineTo(
+                  textX - ctx.measureText(data.data[i].province).width,
+                  textY
+                )
+              }
+              ctx.strokeStyle = colors[i]
+              ctx.stroke()
+            }
+          }
+          //  绘制提标及提示
+          drawTitle(data) {
+            //  定义方块大小为20
+            const size = 20
+            const w = this.w
+            const h = this.h
+            const ctx = this.ctx
+
+            const colors = data.data.reduce((pre, cur) => {
+              return pre.concat(cur.color)
+            }, [])
+            ctx.fillStyle = 'black'
+            ctx.fillText(data.title, w / 20, h / 10)
+
+            for (let i = 0; i < data.data.length; i++) {
+              ctx.beginPath()
+              ctx.moveTo(w / 20, (h * (2 + i)) / 10)
+              ctx.lineTo(w / 20 + size, (h * (2 + i)) / 10)
+              ctx.lineWidth = size
+              ctx.strokeStyle = colors[i]
+              ctx.stroke()
+              ctx.textBaseline = 'middle'
+              ctx.fillStyle = colors[i]
+              ctx.fillText(
+                data.data[i].province,
+                w / 20 + size + 10,
+                (h * (2 + i)) / 10
+              )
+            }
+          }
+        }
+        const data = {
+          title: '人口分布',
+          data: [
+            {
+              province: 'zhejiang',
+              count: 15,
+              color: '#CCCC00',
+            },
+            {
+              province: 'fujian',
+              count: 25,
+              color: '#99CC00',
+            },
+            {
+              province: 'guangzhou',
+              count: 20,
+              color: '#FFCC99',
+            },
+            {
+              province: 'jiangsu',
+              count: 40,
+              color: '#CC3333',
+            },
+            {
+              province: 'hunan',
+              count: 10,
+              color: 'blue',
+            },
+            {
+              province: 'jiangxi',
+              count: 59,
+              color: 'pink',
+            },
+          ],
+        }
+        const pie = new Pie()
+        pie.drawText(data)
+        pie.drawPie(data)
+
+        pie.drawTitle(data)
+      }
+    </script>
+  </head>
+  <body>
+    <canvas width="700px" height="400px"></canvas>
+  </body>
+</html>

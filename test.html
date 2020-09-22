@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      .demo {
+        display: block;
+      }
+    </style>
+    <script>
+      window.onload = () => {
+        const myCanvas = document.querySelector('canvas')
+        const ctx = myCanvas.getContext('2d')
+        ~~(function setCanvasSize() {
+          window.onresize = arguments.callee
+          console.log(1)
+          myCanvas.setAttribute('width', window.innerWidth)
+          myCanvas.setAttribute('height', window.innerHeight)
+        })()
+        ctx.beginPath()
+
+        ctx.arc(10, 10, 10, 0, 2 * Math.PI)
+        ctx.fillStyle = 'red'
+        ctx.fill()
+        ctx.beginPath()
+
+        ctx.arc(20, 20, 10, 0, 2 * Math.PI)
+        ctx.fillStyle = 'red'
+        ctx.fill()
+      }
+    </script>
+  </head>
+  <body>
+    <canvas class="demo"></canvas>
+  </body>
+</html>

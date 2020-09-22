@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        border: 1px solid red;
+      }
+    </style>
+    <script>
+      window.onload = () => {
+        let img = new Image()
+        img.onload = () => {
+          const canvas = document.querySelector('canvas')
+          const ctx = canvas.getContext('2d')
+          const imgSize = { w: img.width, h: img.height }
+          let x = 0
+          let y = 0
+
+          setInterval(() => {
+            if (x === imgSize.w) {
+              y += imgSize.h / 3
+              x = 0
+            }
+            if (y === imgSize.h) {
+              x = 0
+              y = 0
+            }
+            ctx.drawImage(
+              img,
+              x,
+              y,
+              imgSize.w / 9,
+              imgSize.h / 3,
+              100,
+              100,
+              (imgSize.w / 9) * 3,
+              (imgSize.h / 3) * 3
+            )
+            x += imgSize.w / 9
+          }, 300)
+        }
+        img.src = './timg.jpg'
+      }
+    </script>
+  </head>
+  <body>
+    <canvas width="700px" height="400px"></canvas>
+  </body>
+</html>

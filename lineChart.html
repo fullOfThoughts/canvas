@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      canvas {
+        border: 1px solid red;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="750px" height="450px"></canvas>
+    <script>
+      class LineChart {
+        constructor() {
+          this.ctx = document.querySelector('canvas').getContext('2d')
+          this.canvasSize = {
+            x: this.ctx.canvas.width,
+            y: this.ctx.canvas.height,
+          }
+          //  定义轴长为总长的0.8
+          this.axisSize = {
+            x: this.ctx.canvas.width * 0.8,
+            y: this.ctx.canvas.height * 0.8,
+          }
+          //  定义间距
+          this.space = {
+            x: (this.ctx.canvas.width - this.axisSize.x) / 2,
+            y: (this.ctx.canvas.height - this.axisSize.y) / 2,
+          }
+          //  暂时定义dot
+          this.dotSize = 6
+          //  暂时定义箭头大小
+          this.arrow = { x: 20, y: 3 }
+          //  定义网格大小
+          this.gridSize = 30
+        }
+
+        //  初始化数据
+        init(data) {
+          const ctx = this.ctx
+          const canvasSize = this.canvasSize
+          const axisSize = this.axisSize
+          const space = this.space
+          const arrow = this.arrow
+          const gridSize = this.gridSize
+          const xRange = axisSize.x - (arrow.x * 3) / 2
+          const yRange = axisSize.y - (arrow.x * 3) / 2
+          const dotSize = this.dotSize
+          ctx.moveTo(space.x, space.y + axisSize.y)
+
+          let i = 0
+          while (i < data.length) {
+            ctx.lineTo(space.x + data[i].x, space.y + axisSize.y - data[i].y)
+            i++
+          }
+          ctx.stroke()
+          ctx.beginPath()
+          let a = 0
+          while (a < data.length) {
+            ctx.beginPath()
+            ctx.moveTo(
+              space.x + data[a].x - dotSize / 2,
+              space.y + axisSize.y - data[a].y
+            )
+            ctx.lineTo(
+              space.x + data[a].x + dotSize / 2,
+              space.y + axisSize.y - data[a].y
+            )
+            ctx.lineWidth = 6
+            ctx.stroke()
+            a++
+          }
+        }
+        //  绘制网格
+        drawGrid() {
+          const ctx = this.ctx
+          const canvasSize = this.canvasSize
+          const axisSize = this.axisSize
+          const space = this.space
+          const arrow = this.arrow
+          const gridSize = this.gridSize
+          const xRange = axisSize.x - (arrow.x * 3) / 2
+          const yRange = axisSize.y - (arrow.x * 3) / 2
+          console.log(xRange, yRange)
+          let i = 0
+          while (i <= xRange) {
+            if (i !== 0) {
+              ctx.beginPath()
+              ctx.moveTo(space.x + i + 0.5, space.y + axisSize.y)
+              ctx.lineTo(space.x + i + 0.5, space.y + axisSize.y - yRange)
+              ctx.stroke()
+            }
+            i = i + gridSize
+          }
+          let a = 0
+          while (a <= yRange) {
+            if (a !== 0) {
+              ctx.beginPath()
+              ctx.moveTo(space.x, space.y + axisSize.y - a + 0.5)
+              ctx.lineTo(space.x + xRange, space.y + axisSize.y - a + 0.5)
+              ctx.stroke()
+            }
+            a = a + gridSize
+          }
+        }
+        //  绘制坐标系
+        drawAxis() {
+          //  绘制主体
+          //  X
+          const ctx = this.ctx
+          const canvasSize = this.canvasSize
+          const axisSize = this.axisSize
+          const space = this.space
+          const arrow = this.arrow
+
+          ctx.moveTo(space.x, axisSize.y + space.y + 0.5)
+          ctx.lineTo(axisSize.x + space.x, axisSize.y + space.y + 0.5)
+          ctx.lineTo(
+            axisSize.x + space.x - arrow.x,
+            axisSize.y + space.y - arrow.y + 0.5
+          )
+          ctx.lineTo(
+            axisSize.x + space.x - arrow.x,
+            axisSize.y + space.y + arrow.y + 0.5
+          )
+          ctx.lineTo(axisSize.x + space.x, axisSize.y + space.y + 0.5)
+          ctx.fill()
+          ctx.stroke()
+          // Y
+          ctx.beginPath()
+          ctx.moveTo(space.x + 0.5, axisSize.y + space.y)
+          ctx.lineTo(space.x + 0.5, space.y)
+          ctx.lineTo(space.x - arrow.y + 0.5, space.y + arrow.x)
+          ctx.lineTo(space.x + arrow.y + 0.5, space.y + arrow.x)
+          ctx.lineTo(space.x + 0.5, space.y)
+          ctx.fill()
+          ctx.stroke()
+        }
+      }
+      const data = [
+        { x: 50, y: 100 },
+        { x: 100, y: 20 },
+        { x: 150, y: 200 },
+        { x: 200, y: 135 },
+        { x: 250, y: 300 },
+        { x: 300, y: 12 },
+        { x: 350, y: 235 },
+        { x: 400, y: 222 },
+      ]
+      const lineChart = new LineChart()
+      lineChart.drawAxis()
+      lineChart.drawGrid()
+      lineChart.init(data)
+    </script>
+  </body>
+</html>
