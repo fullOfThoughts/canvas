@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+      canvas {
+        background-color: black;
+      }
+    </style>
+    <script>
+      window.onload = () => {
+        const myCanvas = document.querySelector('canvas')
+        const ctx = myCanvas.getContext('2d')
+        ~~(function initSize() {
+          window.onresize = () => {
+            myCanvas.width = window.innerWidth
+            myCanvas.height = window.innerHeight
+            myCanvas.style.display = 'block'
+          }
+          myCanvas.width = window.innerWidth
+          myCanvas.height = window.innerHeight
+          myCanvas.style.display = 'block'
+        })()
+
+        //  绘制文字
+        const str =
+          'Youmay skip through a book, reading only those passages concerned'
+        const fontSize = 18
+
+        const W = window.innerWidth
+        const H = window.innerHeight
+        const Xcount = Math.floor(W / fontSize)
+        const Ycount = Math.floor(H / fontSize)
+        const arr = []
+        for (let i = 0; i < Xcount; i++) {
+          arr.push(1)
+        }
+
+        function create() {
+          ctx.fillStyle = 'rgba(0,0,0,0.08)'
+          ctx.fillRect(0, 0, W, H)
+
+          for (let i = 0; i < Xcount; i++) {
+            const x = i * fontSize
+            const y = arr[i] * fontSize
+            ctx.fillStyle =
+              //  'green'
+              `rgba(${Math.floor(Math.random() * 256)},${Math.floor(
+                Math.random() * 256
+              )},${Math.floor(Math.random() * 256)},${Math.floor(
+                Math.random() * 256
+              )})`
+            ctx.font = '500 18px 微软雅黑'
+            ctx.fillText(str[Math.floor(Math.random() * str.length)], x, y)
+            arr[i]++
+            if (y > H && Math.random() > 0.995) {
+              arr[i] = 0
+            }
+          }
+        }
+        setInterval(create, 30)
+      }
+    </script>
+  </head>
+  <body>
+    <canvas></canvas>
+  </body>
+</html>

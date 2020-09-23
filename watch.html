@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+    </style>
+    <script src="./time.js"></script>
+    <script>
+      window.onload = () => {
+        ~~(function initSize() {
+          window.onresize = arguments.callee
+          const W = window.innerWidth
+          const H = window.innerHeight
+          document.querySelector('canvas').width = W
+          document.querySelector('canvas').height = H
+          document.querySelector('canvas').style.display = 'block'
+          document.querySelector('canvas').style.background = '#33CEC3'
+          this.ctx = document.querySelector('canvas').getContext('2d')
+        })()
+        class Time {
+          constructor() {
+            this.ctx = document.querySelector('canvas').getContext('2d')
+            this.w = this.ctx.canvas.width
+            this.h = this.ctx.canvas.height
+          }
+          // 画一个
+          darwOne() {
+            let second = new Date().getSeconds().toString()
+            if (second.length === 1) {
+              second = '0' + second
+            }
+            const ctx = this.ctx
+            const w = this.w
+            const h = this.h
+            const xCount = time[0][0].length
+            const yCount = time.length
+            for (let b = 0; b < 2; b++) {
+              let number = second[b] * 1
+
+              for (let a = 0; a < yCount; a++) {
+                for (let i = 0; i < xCount; i++) {
+                  let x = i * 10 * 2 + 50 + b * 120
+                  let y = 100 + a * 10 * 2
+                  ctx.beginPath()
+                  ctx.arc(x, y, 10, 0, 2 * Math.PI)
+                  time[number][a][i] === 1
+                    ? (ctx.fillStyle = 'black')
+                    : (ctx.fillStyle = '#33CEC3')
+                  ctx.fill()
+                  ctx.strokeStyle = '#33CEC3'
+                  ctx.lineWidth = 3
+                  ctx.stroke()
+                }
+              }
+            }
+          }
+        }
+        const watch = new Time()
+        setInterval(() => {
+          watch.darwOne()
+        }, 1000)
+      }
+    </script>
+  </head>
+  <body>
+    <canvas></canvas>
+  </body>
+</html>

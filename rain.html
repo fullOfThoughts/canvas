@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+    </style>
+    <script>
+      window.onload = () => {
+        ~~(function initSize() {
+          window.onresize = arguments.callee
+          const W = window.innerWidth
+          const H = window.innerHeight
+          document.querySelector('canvas').width = W
+          document.querySelector('canvas').height = H
+          document.querySelector('canvas').style.display = 'block'
+          document.querySelector('canvas').style.background = 'black'
+          this.ctx = document.querySelector('canvas').getContext('2d')
+        })()
+        class Rain {
+          constructor() {
+            this.ctx = document.querySelector('canvas').getContext('2d')
+            this.w = this.ctx.canvas.width
+            this.h = this.ctx.canvas.height
+            this.rainW = 3
+            this.rainH = 20
+            this.r = 2
+            this.xCount = Math.floor(this.w / this.rainW)
+            this.yCount = Math.floor(this.y / this.rainH)
+            this.x = this.w * Math.random()
+            this.VY = 5
+            this.HH =
+              Math.random() * ((this.h * 9) / 10 - (this.h * 8) / 10) +
+              (this.h * 8) / 10
+          }
+          drawRain() {
+            const ctx = this.ctx
+            const w = this.w
+            const h = this.h
+            const rainW = this.rainW
+            const rainH = this.rainH
+
+            const x = this.x
+            const y = this.VY
+            if (y > this.HH) {
+              ctx.beginPath()
+              ctx.arc(x, y, this.r, 0, 2 * Math.PI)
+              ctx.strokeStyle = '#31f7f7'
+              ctx.stroke()
+            } else {
+              ctx.fillStyle = '#31f7f7'
+              ctx.fillRect(x, y, rainW, rainH)
+            }
+          }
+          move() {
+            const ctx = this.ctx
+            if (this.VY > this.HH) {
+              if (this.r < 50) {
+                this.r += 1
+              } else {
+                this.x = this.w * Math.random()
+                this.VY = 5
+                this.r = 2
+              }
+            } else {
+              this.VY += 5
+            }
+          }
+        }
+        // 创建全局数组储存实例
+        let arr = []
+        for (let i = 0; i < 20; i++) {
+          setTimeout(() => {
+            const rain = new Rain()
+            rain.drawRain()
+            arr.push(rain)
+          }, 300 * i)
+        }
+        // setInterval(() => {
+        //   for (let i = 0; i < 66; i++) {
+        //     setTimeout(() => {
+        //       const rain = new Rain()
+        //       rain.drawRain()
+        //       arr.push(rain)
+        //       arr.length > 132 ? arr.splice(66) : ''
+        //     }, 300 * i)
+        //   }
+        // }, 300 * 64)
+        setInterval(() => {
+          const ctx = document.querySelector('canvas').getContext('2d')
+          ctx.fillStyle = 'rgba(0,0,0,0.15)'
+          ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+          arr.forEach((item) => {
+            item.move()
+            item.drawRain()
+          })
+        }, 1000 / 60)
+      }
+    </script>
+  </head>
+  <body>
+    <canvas></canvas>
+  </body>
+</html>

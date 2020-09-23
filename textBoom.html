@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+      }
+    </style>
+  </head>
+  <script>
+    window.onload = () => {
+      ~~(function initSize() {
+        window.onresize = arguments.callee
+        const W = window.innerWidth
+        const H = window.innerHeight
+        document.querySelector('canvas').width = W
+        document.querySelector('canvas').height = H
+        document.querySelector('canvas').style.display = 'block'
+        document.querySelector('canvas').style.background = 'black'
+        this.ctx = document.querySelector('canvas').getContext('2d')
+      })()
+      class Text {
+        constructor() {
+          this.ctx = document.querySelector('canvas').getContext('2d')
+          this.w = this.ctx.canvas.width
+          this.h = this.ctx.canvas.height
+          this.VX = -Math.random() + Math.random()
+          this.VY = Math.random()
+          this.initX = this.w / 2
+          this.initY = this.h
+        }
+        //  渲染文字
+        render() {
+          const ctx = this.ctx
+          const str =
+            'Discover interesting projects and people to populate your personal news feed'
+          ctx.fillStyle = `green`
+          ctx.fillText(
+            str[Math.floor(Math.random() * str.length)],
+            this.initX,
+            this.initY
+          )
+        }
+        //  为文字添加速度
+        move() {
+          this.initX += this.VX
+          this.initY -= this.VY
+        }
+      }
+      //  定义全局数组存放实例
+      let arr = []
+      function create() {
+        for (let i = 0; i < 1; i++) {
+          const text = new Text()
+          arr.push(text)
+        }
+      }
+      create()
+      setInterval(() => {
+        create()
+        const ctx = document.querySelector('canvas').getContext('2d')
+        ctx.fillStyle = 'rgba(0,0,0,0.05)'
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+        arr.forEach((item) => {
+          item.move()
+          item.render()
+        })
+      }, 1000 / 500)
+    }
+  </script>
+  <body>
+    <canvas></canvas>
+  </body>
+</html>
