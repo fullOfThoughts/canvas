@@ -14,6 +14,7 @@
     <script src="./time.js"></script>
     <script>
       window.onload = () => {
+        //  动态调整尺寸
         ~~(function initSize() {
           window.onresize = arguments.callee
           const W = window.innerWidth
@@ -24,48 +25,141 @@
           document.querySelector('canvas').style.background = '#33CEC3'
           this.ctx = document.querySelector('canvas').getContext('2d')
         })()
-        class Time {
+        //  创建clock 类
+        class Clock {
           constructor() {
             this.ctx = document.querySelector('canvas').getContext('2d')
             this.w = this.ctx.canvas.width
             this.h = this.ctx.canvas.height
+            this.initTime()
+            this.bolls = []
           }
-          // 画一个
-          darwOne() {
-            let second = new Date().getSeconds().toString()
-            if (second.length === 1) {
-              second = '0' + second
-            }
+          //  initTime
+          initTime() {
+            const temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date())
+            this.initTime = [
+              { number: temp[1], x: 200, y: 100 },
+              { number: temp[2], x: 325, y: 100 },
+              { number: 10, x: 450, y: 100 },
+
+              { number: temp[3], x: 550, y: 100 },
+              { number: temp[4], x: 675, y: 100 },
+              { number: 10, x: 800, y: 100 },
+
+              { number: temp[5], x: 900, y: 100 },
+              { number: temp[6], x: 1025, y: 100 },
+            ]
+          }
+          //  创建一个
+          createOne(data) {
+            this.newTime = data
             const ctx = this.ctx
             const w = this.w
             const h = this.h
-            const xCount = time[0][0].length
-            const yCount = time.length
-            for (let b = 0; b < 2; b++) {
-              let number = second[b] * 1
-
-              for (let a = 0; a < yCount; a++) {
-                for (let i = 0; i < xCount; i++) {
-                  let x = i * 10 * 2 + 50 + b * 120
-                  let y = 100 + a * 10 * 2
+            //  循环创建
+            data.forEach((item) => {
+              for (let a = 0; a < time[0].length; a++) {
+                for (let i = 0; i < time[0][0].length; i++) {
+                  const x = i * 8 * 2 + item.x
+                  const y = a * 8 * 2 + item.y
                   ctx.beginPath()
-                  ctx.arc(x, y, 10, 0, 2 * Math.PI)
-                  time[number][a][i] === 1
-                    ? (ctx.fillStyle = 'black')
-                    : (ctx.fillStyle = '#33CEC3')
-                  ctx.fill()
-                  ctx.strokeStyle = '#33CEC3'
-                  ctx.lineWidth = 3
-                  ctx.stroke()
+                  ctx.arc(x, y, 6, 0, 2 * Math.PI)
+                  if (time[item.number][a][i] === 1) {
+                    ctx.fillStyle = '#333399'
+                    ctx.fill()
+                  }
                 }
               }
+            })
+            this.renderChange()
+          }
+          //  查找改变的
+          renderChange() {
+            this.newTime.forEach((item1, index1) => {
+              this.initTime.forEach((item2, index2) => {
+                if (index1 === index2) {
+                  if (item1.number !== item2.number) {
+                    if (item2.number !== 10) {
+                      for (let a = 0; a < time[0].length; a++) {
+                        for (let i = 0; i < time[0][0].length; i++) {
+                          if (time[item1.number][a][i] === 1) {
+                            const boll = {
+                              x: i * 8 * 2 + item2.x,
+                              y: a * 8 * 2 + item2.y,
+                              vy: -9,
+                              vx: Math.random() * 4 - 2,
+                              g: Math.random() * 1 + 1,
+                            }
+                            this.bolls.unshift(boll)
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              })
+            })
+            this.render()
+            this.initTime = this.newTime
+          }
+          //  渲染改变的
+          render() {
+            const ctx = this.ctx
+
+            this.bolls.forEach((item, index) => {
+              item.x += item.vx
+              item.y += item.vy
+              item.vy += item.g
+              ctx.beginPath()
+              ctx.arc(item.x, item.y, 6, 0, 2 * Math.PI)
+              ctx.fillStyle = ['#FF0033', '#666699'][
+                Math.floor(Math.random() * 2)
+              ]
+              ctx.fill()
+              if (item.y + 6 > this.h) {
+                item.y = this.h - 6
+                item.vy = -item.vy * 0.7
+              }
+              if (Math.abs(this.h - item.y + 6) < 15 && Math.abs(item.vy) < 8) {
+                item.y = this.h - 6
+                item.vy = 0
+                item.g = 0
+              }
+            })
+            let canSave = 0
+            for (let i = 0; i < this.bolls.length; i++) {
+              if (this.bolls[i].x > 0 && this.bolls[i].x < this.w) {
+                this.bolls[canSave] = this.bolls[i]
+                canSave++
+              }
             }
+            this.bolls.length = canSave
+            if (this.bolls.length > 1000) {
+              this.bolls.length = 300
+            }
+            console.log(this.bolls.length)
           }
         }
-        const watch = new Time()
+        const clock = new Clock()
+
         setInterval(() => {
-          watch.darwOne()
-        }, 1000)
+          const ctx = document.querySelector('canvas').getContext('2d')
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+          const temp = /(\d)(\d):(\d)(\d):(\d)(\d)/.exec(new Date())
+          const timeArr = [
+            { number: temp[1], x: 200, y: 100 },
+            { number: temp[2], x: 325, y: 100 },
+            { number: 10, x: 450, y: 100 },
+
+            { number: temp[3], x: 550, y: 100 },
+            { number: temp[4], x: 675, y: 100 },
+            { number: 10, x: 800, y: 100 },
+
+            { number: temp[5], x: 900, y: 100 },
+            { number: temp[6], x: 1025, y: 100 },
+          ]
+          clock.createOne(timeArr)
+        }, 1000 / 60)
       }
     </script>
   </head>
